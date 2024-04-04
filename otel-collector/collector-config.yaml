@@ -1,0 +1,29 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+
+exporters:
+  debug:
+  awsemf:
+      region: 'us-east-2'
+      resource_to_telemetry_conversion:
+          enabled: true
+      detailed_metrics: true
+  awscloudwatchlogs:
+    log_group_name: "otlp-logs"
+    log_stream_name: "otlp-stream"
+    region: "us-east-2"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp]
+      exporters: [awsemf, debug]
+    logs:
+      receivers: [otlp]
+      exporters: [awscloudwatchlogs, debug]
